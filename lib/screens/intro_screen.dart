@@ -48,37 +48,6 @@ class IntroScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 32),
               child: Column(
                 children: [
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        children: [
-                          const Icon(
-                            Icons.lightbulb_outline,
-                            size: 48,
-                            color: Colors.amber,
-                          ),
-                          const SizedBox(height: 12),
-                          const Text(
-                            'Features',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            '• Multiple inspirational quotes\n'
-                            '• Beautiful user interface\n'
-                            '• Two implementation versions\n'
-                            '• Powered by ZenQuotes API',
-                            style: TextStyle(fontSize: 16),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
                   const SizedBox(height: 24),
                   const Text(
                     'Choose Implementation:',

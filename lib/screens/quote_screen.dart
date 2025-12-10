@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/quote.dart';
+import '../widgets/info_banner.dart';
+import '../widgets/quote_card.dart';
 
 class QuoteScreen extends StatefulWidget {
   const QuoteScreen({super.key});
@@ -35,7 +37,9 @@ class _QuoteScreenState extends State<QuoteScreen> {
       if (response.statusCode == 200) {
         final List quotesJson = json.decode(response.body);
         List<Quote> fetchedQuotes = quotesJson
-            .map((quoteData) => Quote.fromJSON(quoteData))
+            .map(
+              (quoteData) => Quote.fromJson(quoteData as Map<String, dynamic>),
+            )
             .toList();
         setState(() {
           quotes = fetchedQuotes;
@@ -53,7 +57,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
       setState(() {
         quotes = [];
         isLoading = false;
-        errorMessage = 'Error: $e';
+        errorMessage = 'Error while fetching quotes';
       });
     }
   }
@@ -64,56 +68,19 @@ class _QuoteScreenState extends State<QuoteScreen> {
       appBar: AppBar(
         title: const Text('Daily Quotes (http.dart)'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        actions: [
-          IconButton(
-            onPressed: isLoading ? null : _fetchQuotes,
-            icon: const Icon(Icons.refresh),
-            tooltip: 'Refresh Quotes',
-          ),
-        ],
       ),
       body: Column(
         children: [
-          // Technology indicator
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(12.0),
-            margin: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              color: Colors.blue.shade100,
-              border: Border.all(color: Colors.blue),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.http, color: Colors.blue),
-                SizedBox(width: 8),
-                Text(
-                  'Using http.dart',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+          const InfoBanner(
+            text: 'Using http.dart',
+            icon: Icons.http,
+            color: Colors.blue,
           ),
           if (errorMessage != null)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16.0),
-              margin: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.red.shade100,
-                border: Border.all(color: Colors.red),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                errorMessage!,
-                style: const TextStyle(color: Colors.red),
-                textAlign: TextAlign.center,
-              ),
+            InfoBanner(
+              text: errorMessage!,
+              icon: Icons.error_outline,
+              color: Colors.red,
             ),
           Expanded(
             child: isLoading
@@ -129,79 +96,12 @@ class _QuoteScreenState extends State<QuoteScreen> {
                 : ListView.builder(
                     padding: const EdgeInsets.all(16.0),
                     itemCount: quotes.length,
-                    itemBuilder: (context, index) {
-                      final quote = quotes[index];
-                      return Card(
-                        elevation: 4,
-                        margin: const EdgeInsets.only(bottom: 16.0),
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.format_quote,
-                                    size: 24,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'Quote ${index + 1}',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                  ),
-                                  const Spacer(),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.blue.shade100,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: const Text(
-                                      'http.dart',
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.blue,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                quote.text,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontStyle: FontStyle.italic,
-                                  height: 1.4,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: Text(
-                                  '— ${quote.author}',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
+                    itemBuilder: (context, index) => QuoteCard(
+                      quote: quotes[index],
+                      index: index,
+                      badge: 'http.dart',
+                      badgeColor: Colors.blue,
+                    ),
                   ),
           ),
         ],

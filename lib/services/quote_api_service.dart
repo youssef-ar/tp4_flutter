@@ -9,5 +9,5 @@ abstract class QuoteApiService {
   factory QuoteApiService(Dio dio, {String baseUrl}) = _QuoteApiService;
 
   @GET('/quotes')
-  Future<List<Quote>> getQuotes();
+  Future<List<Quote>> getQuotes(); // flutter pub run build_runner build
 }
